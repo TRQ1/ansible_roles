@@ -1,0 +1,43 @@
+---
+# 태스크명: Add repo file
+# 행동1: 템플릿 복사(소스=repo파일, 목적지, 파일권한) 
+# 행동2: template 모듈의 결과값을 mariadb_list변수에 등록
+- name: Add repo file
+  template: src=mariadb_ubuntu.list.j2 dest=/etc/apt/sources.list.d/mariadb.list owner=root group=root mode=0644
+  register: mariadb_list
+
+# 태스크명: Add repo key
+# 행동1: MariaDB 레포 키값을 등록
+# 행동2: apt_key 모듈의 결과값을 mariadb_key변수에 등록
+- name: Add repo key
+  apt_key: id=1BB943DB url=http://keyserver.ubuntu.com/pks/lookup?op=get&search=0xCBCB082A1BB943DB state=present
+  register: mariadb_key
+
+# 태스크명: Update apt cache
+# 조건: mariadb_list.changed변수가 True이거나 mariadb_key.changed변수가 True일 때
+# 행동: APT 캐시 업데이트
+- name: Update apt cache
+  apt: update_cache=yes
+  when: mariadb_list.changed == True or mariadb_key.changed == True
+
+# 태스크명: Unattended package installation
+# 조건: 변경 사항이 없을 때 
+# 행동: 쉘 명령어 실행(export 환경변수)
+- name: Unattended package installation
+  shell: export DEBIAN_FRONTEND=noninteractive
+  changed_when: false
+
+# 태스크명: Install MariaDB
+# 행동: MariaDB 패키지 설치(maria-server, maria-client)
+- name: Install MariaDB
+  apt: pkg={{ item }} state=present
+  with_items:
+    - mariadb-server
+    - mariadb-client
+
+# 태스크명: Install MySQLdb Python package for secure installations.
+# 조건: mysql_secure_installation변수와 mysql_root_password변수가 지정되어 있지 않을 때
+# 행동: python-mysqldb 패키지 설치
+- name: Install MySQLdb Python package for secure installations.
+  apt: pkg=python-mysqldb state=present
+  when: mysql_secure_installation and mysql_root_password is defined

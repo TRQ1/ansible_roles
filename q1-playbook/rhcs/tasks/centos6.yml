@@ -1,0 +1,24 @@
+---
+  - name: Add HA repository
+    yum_repository:
+      name: RHCS
+      description: RHCS
+      baseurl: "file://{{ repository_rhcs }}"
+      gpgcheck: no
+
+  - name: Install RHCS
+    yum: name="{{ item }}" state=present
+    with_items:
+      - @High Availability
+      - @High Availability Management
+  
+  - name: Enable Service
+    service: name="{{ item }}" state=started enabled=yes
+    with_items:
+      - ricci
+      - cman
+      - rgmanager
+      - modclusterd
+
+  - name: ensure that cluster.conf file is created
+    copy: src="{{ template_url }}/cluster.conf" dest=/etc/cluster/

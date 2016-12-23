@@ -1,0 +1,91 @@
+---
+  - name: Check NetworkManger
+    stat: path=/etc/init.d/NetworkManager
+    register: nm_stat
+
+  - name: Ensure NetworkManager service is stopped 
+    service: name=NetworkManager state=stopped enabled=no
+    when: nm_stat.stat.exists == True
+  
+  - name: Ensure that services are stopped
+    service: name="{{ item }}" state=stopped enabled=no
+    with_items:
+        - yum-updatesd
+        - systemtap
+        - postfix
+        - lldpad
+        - ip6tables
+        - gpm
+        - spice-vdagentd
+        - cgconfig
+        - abrtd
+        - tog-pegasus
+        - isdn
+        - auditd
+        - cachefilesd
+        - pppoe-server
+        - setroubleshoot
+        - uuidd
+        - ksmtuned
+        - ibacm
+        - kudzu
+        - acpid
+        - rhsmcertd
+        - rpcgssd
+        - mcelogd
+        - hidd
+        - fcoe-target
+        - iscsid
+        - rhnsd
+        - iptables
+        - mcstrans
+        - restorecond
+        - abrt-ccpp
+        - qpidd
+        - firstboot
+        - cpuspeed
+        - abrt-oops
+        - iscsi
+        - fcoe
+        - rpcidmapd
+        - mdmonitor
+        - cups
+        - avahi-daemon
+        - arptables_jf
+        - libvirt-guests
+        - ksm
+        - trace-cmd
+        - NetworkManager
+        - smartd
+        - sendmail
+        - pcscd
+        - lm_sensors
+        - bluetooth
+        - certmonger
+        - sandbox    
+
+  - name: Ensure selinux is disabled.
+    selinux: state=disabled
+
+  - name: Disable ACPI service
+    service: name=acpid enabled=no state=stoped
+
+  - name: Add HA repository
+    yum_repository:
+      name: RHCS
+      description: RHCS
+      baseurl: "file://{{ repository_rhcs }}"
+      gpgcheck: no
+
+
+  - name: Ensure heatbeat hostname in /etc/hosts.
+    lineinfile: dest=/etc/hosts state=present line='{{item}}'
+    with_items:
+        - "#Heartbeat"
+        - "{{heartbeat1_master_ip}} {{heartbeat1_master_hostname}}"
+        - "{{heartbeat2_slaver_ip}} {{heartbeat2_slaver_hostname}}"
+        - ""
+        - "#Node"
+        - "{{Node1_master_ip}} {{Node1_master_hostname}}"
+        - "{{Node2_slaver_ip}} {{Node2_slaver_hostname}}"
+
