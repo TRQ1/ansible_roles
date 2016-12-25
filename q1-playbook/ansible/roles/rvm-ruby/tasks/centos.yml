@@ -1,0 +1,33 @@
+---
+  - name: ensure necessary packages are installed
+    yum:
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - curl
+      - gnupg2
+
+  - name: ensure that GPG key for RVM is installed
+    command: gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+    args:
+      creates: "{{ ansible_env.HOME }}/.gnupg/secring.gpg"
+
+  - name: ensure that RVM is installed
+    shell: curl -sSL https://get.rvm.io | bash
+    args:
+      creates: "{{ ansible_env.HOME }}/.rvm/bin/"
+
+  - name: ensure that ruby is installed
+    command: "rvm install {{ ruby_version }}"
+    args:
+      creates: "{{ ansible_env.HOME }}/.rvm/gems/ruby-{{ ruby_version }}"
+
+  - name: set default version of ruby with rvm
+    command: "rvm alias create default ruby-{{ ruby_version }}"
+    args:
+      creates: "{{ ansible_env.HOME }}/.rvm/config/alias"
+
+  - name: ensure that bundler is installed
+    command: bash -lc "gem install bundler"
+    args:
+      creates: "{{ ansible_env.HOME }}/.rvm/gems/ruby-{{ ruby_version }}/gems/bundler-*"
