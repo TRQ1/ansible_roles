@@ -1,0 +1,4 @@
+---
+  Gemfile_template: /etc/ansible/playbook/q1-playbook/serverspec_server/templates/Gemfile
+  template_url: /etc/ansible/playbook/q1-playbook/serverspec_server/templates
+  ruby_path: "{{ ansible_env.HOME }}/.rvm/rubies/ruby-2.1.3"

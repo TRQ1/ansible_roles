@@ -1,0 +1,11 @@
+---
+#Host configuration
+heartbeat1_master_ip:
+heartbeat1_master_hostname:
+heartbeat2_slaver_ip:
+heartbeat2_slaver_hostname:
+Node1_master_ip:
+Node1_master_hostname:
+Node2_slaver_ip:
+Node2_slaver_hostname:
+

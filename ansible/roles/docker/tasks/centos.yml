@@ -1,0 +1,34 @@
+---
+
+  - name: Add EPEL repository
+     yum_repository:
+     name: epel
+     description: EPEL YUM repo
+     baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/
+
+  - name: Add docker reposirory
+     template: 
+        src: "{{ docker_template }}/docker.repo.j2"
+        dest: /etc/yum.repos.d/ 
+        owner: root
+        group: root
+
+  - name: install docker-engine in centos
+     yum:
+       name: docker-engine
+       state: latest
+  
+  - name: ensure that necessary packages are installed
+    yum:
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - python-pip
+      - docker-py
+
+  - name: action to start service docker-engine
+     systemd:
+        name: docker-engine
+        enabled: yes
+        state: start
+
