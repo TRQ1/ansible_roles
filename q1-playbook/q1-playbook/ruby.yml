@@ -1,7 +1,0 @@
----
-- hosts: centos
-  remote_user: q1
-
-  roles:
-    - rvm-ruby
-    - serverspec_server

@@ -1,8 +1,0 @@
----
-- hosts: centos
-  remote_user: q1
-  become: yes
-  become_method: sudo
-
-  roles:
-    - rhcs
