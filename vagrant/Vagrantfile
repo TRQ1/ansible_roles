@@ -1,0 +1,34 @@
+# -*- mode: ruby -*-
+
+Vagrant.configure(2) do |config|
+  if (/cygwin|mswin|mingw|bccwin|wince|emx/ =~ RUBY_PLATFORM) != nil
+    config.vm.synced_folder ".", "/Users/TRQ1/vagrant", mount_options: ["dmode=700,fmode=600"]
+  else
+    config.vm.synced_folder ".", "/Users/TRQ1/vagrant"
+  end
+  config.vm.define "swarm-manager-1" do |d|
+    d.vm.box = "https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-vagrant.box"
+    d.vm.hostname = "swarm-manager-1"
+    d.vm.network "private_network", ip: "10.211.55.15"
+    d.vm.provision :shell, path: "scripts/swarm-cluster-config.sh"
+    d.vm.provision :shell, inline: "sudo docker swarm init --advertise-addr 10.211.55.15"
+    d.vm.provision :shell, inline: "docker swarm join-token -q worker >/Users/TRQ1/vagrant/worker-token"
+    d.vm.provider "parallels" do |v|
+      v.memory = 1024
+    end
+  end
+  (1..2).each do |i|
+    config.vm.define "swarm-worker-#{i}" do |d|
+      d.vm.box = "https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-vagrant.box"
+      d.vm.hostname = "swarm-worker-#{i}"
+      d.vm.network "private_network", ip: "10.211.55.16#{i}"
+      d.vm.provision :shell, path: "scripts/swarm-cluster-config.sh"
+      d.vm.provision :shell, inline: "docker swarm join --token $(cat /vagrant/worker-token) --advertise-addr 10.211.55.16#{i} 10.211.55.16:2377"
+      d.vm.provider "parallels" do |v|
+        v.memory = 1024
+      end
+    end
+  end
+  if Vagrant.has_plugin?("vagrant-cachier")
+    config.cache.scope = :box
+  end
