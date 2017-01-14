@@ -1,0 +1,6 @@
+---
+- hosts: cont
+  remote_user: vagrant
+
+  roles:
+    - docker
