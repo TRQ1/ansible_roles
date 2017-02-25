@@ -1,11 +1,11 @@
 #!/bin/usr/env bash
 
 set -e
-Numbers={
+Numbers=(
 1
 2
 3
-}
+)
 
 for n in Numbers; do
   docker-machine create -d palallers node-$n
@@ -17,7 +17,7 @@ docker swarm init --advertise-addr $(docker-machine ip node-1) -- listen-addr $(
 
 Token=$(docker swarm join -q worker)
 
-for n in Numbers; do
+for n in ${Numbers[@]}; do
   eval $(docker-machine env node-$i)
   docker swarm join --token $Token $(doker-machine ip node-1):2377
 done
