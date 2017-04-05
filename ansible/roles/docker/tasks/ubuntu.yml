@@ -10,6 +10,10 @@
    name: docker-engine
    state: latest
    
+- name: install docker-compose in ubuntu
+  apt:
+   name: docker-compose
+   state: latest
 
 - name: install packages for docker 
   apt: 
