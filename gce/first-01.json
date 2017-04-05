@@ -1,0 +1,19 @@
+{
+  "variables": {
+    "ubuntu_version": "xenial"
+  },
+  "builders": [{
+    "type": "googlecompute",
+    "account_file": "./key-201231.json",
+    "project_id": "trq1-161205",
+    "image_name": "ubuntu-docker-{{user `ubuntu_version`}}-{{timestamp}}",
+    "source_image": "ubuntu-1604-xenial-v20170307",
+    "zone": "asia-northeast1-a",
+    "ssh_username": "ubuntu"
+  }],
+  "provisioners": [{
+    "type": "shell",
+    "script": "./docker.sh"
+  }]
+}
+}
