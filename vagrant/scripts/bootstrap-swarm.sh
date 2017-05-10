@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # install latest docker-engine
 sudo apt-get -y install apt-transport-https \
