@@ -11,3 +11,4 @@ services:
       - ./config.yml:/etc/docker/registry/config.yml
       - ./certs/domain.crt:/certs/domain.crt
       - ./certs/domain.key:/certs/domain.key
+      - ./certs/domain.key:/certs/domain.key
