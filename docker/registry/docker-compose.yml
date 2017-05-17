@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 version: "3"
 services:
   registry:
@@ -11,3 +12,6 @@ services:
       - ./config.yml:/etc/docker/registry/config.yml
       - ./certs/domain.crt:/certs/domain.crt
       - ./certs/domain.key:/certs/domain.key
+=======
+
+>>>>>>> 8f23186a34b857cbb512e1769fc1e2c0ed80939a
